@@ -13,7 +13,7 @@ function set(
   idxstr = string(index)
   out = replace(template, found.match, string(tag, repeat("0", numdigits-length(idxstr)), idxstr))
   for i in 1:2:length(varargin)
-    out = get(out, varargin[i], varargin[i+1])
+    out = set(out, varargin[i], varargin[i+1])
   end
   return out
 end
