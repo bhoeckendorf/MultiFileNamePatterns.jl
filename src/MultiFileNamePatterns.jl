@@ -1,6 +1,25 @@
 module MultiFileNamePatterns
 
-export set
+export get, set
+
+function get(
+    filepath::String,
+    tag::String,
+    varargin...
+    )
+  found = match(Regex("$tag\\d+"), filepath)
+  index = int( found.match[ 1+length(tag) : end ] )
+  if isempty(varargin)
+    return index
+  else
+    out = Array(Int, 1+length(varargin))
+    out[1] = index
+    for i in 1:length(varargin)
+      out[1+i] = get(filepath, varargin[i])
+    end
+    return out
+  end
+end
 
 function set(
     template::String,

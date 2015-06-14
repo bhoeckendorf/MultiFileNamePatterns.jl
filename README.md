@@ -1,20 +1,34 @@
 # MultiFileNamePatterns
 
-A primitive but flexible way to deal with multi-file data sets in Julia.
+A primitive but flexible way to handle file paths of multi-file data sets in Julia.
 
 
 ## Usage
 
-This Julia module currently exports a single function: set
+This module currently exports two functions: `get` and `set`.
 
 ```
 using MultiFileNamePatterns
 
-template = "/path/to/data1/data1_time0000_channel0.csv"
+# file system path to one file of a multi-file data set
+template = "/path/to/data1/data1_time0099_channel0.csv"
 
-# set variable 'filepath' to "/path/to/data1/data1_time0076_channel0.csv"
-filepath = set(template, "time", 76)
+# get data index
+> index = get(template, "time")
+99
 
-# set variable 'filepath' to "/path/to/data0/data0_time0076_channel2.csv"
-filepath = set(template, "time", 76, "channel", 2, "data", 0)
+# get multiple indices at once
+> indices = get(template, "time", "channel")
+2-element Array{Int64,2}
+ 99
+  0
+
+# get file path with given index
+> filepath = set(template, "time", 776)
+"/path/to/data1/data1_time0776_channel0.csv"
+
+# get file path with given indices
+> filepath = set(template, "time", 1, "channel", 2, "data", 0)
+"/path/to/data0/data0_time0001_channel2.csv"
+
 ```
