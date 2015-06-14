@@ -2,6 +2,7 @@ module MultiFileNamePatterns
 
 export get, set
 
+
 function Base.get(
     filepath::String,
     tag::String,
@@ -21,16 +22,22 @@ function Base.get(
   end
 end
 
+
 function set(
     template::String,
     tag::String,
-    index::Int,
+    index::Integer,
     varargin...
     )
   found = match(Regex("$tag\\d+"), template)
   numdigits = length(found.match) - length(tag)
+
   idxstr = string(index)
-  out = replace(template, found.match, string(tag, repeat("0", numdigits-length(idxstr)), idxstr))
+  if length(idxstr) < numdigits
+    idxstr = string(repeat("0", numdigits-length(idxstr)), idxstr)
+  end
+
+  out = replace(template, found.match, string(tag, idxstr))
   for i in 1:2:length(varargin)
     out = set(out, varargin[i], varargin[i+1])
   end

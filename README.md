@@ -5,30 +5,42 @@ A primitive but flexible way to handle file paths of multi-file data sets in Jul
 
 ## Usage
 
-This module currently exports two functions: `get` and `set`.
+This module handles file paths containing named fields followed by numeric indices, such as `/path/to/data1/data1_time0099_channel0.csv`. It exports the two functions `get` and `set` to interact with field indices.
 
+
+### Getting field indices
 ```
 using MultiFileNamePatterns
 
 # file system path to one file of a multi-file data set
-template = "/path/to/data1/data1_time0099_channel0.csv"
+filepath = "/path/to/data1/data1_time0099_channel0.csv"
 
-# get data index
-> index = get(template, "time")
+# get index of 'time' field
+> index = get(filepath, "time")
 99
 
-# get multiple indices at once
-> indices = get(template, "time", "channel")
+# get indices of 'time' and 'channel' fields
+> indices = get(filepath, "time", "channel")
 2-element Array{Int64,2}
  99
   0
+```
 
-# get file path with given index
+
+### Setting field indices
+```
+# representative file system path of data set
+template = "/path/to/data1/data1_time0099_channel0.csv"
+
+# get file path of time point 776
 > filepath = set(template, "time", 776)
 "/path/to/data1/data1_time0776_channel0.csv"
 
-# get file path with given indices
+# get file path with given field indices
 > filepath = set(template, "time", 1, "channel", 2, "data", 0)
 "/path/to/data0/data0_time0001_channel2.csv"
 
+# padding is implicit
+> filepath = set(template, "data", 23, "time", 1)
+"/path/to/data23/data23_time0001_channel0.csv"
 ```
