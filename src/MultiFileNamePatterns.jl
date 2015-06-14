@@ -2,7 +2,7 @@ module MultiFileNamePatterns
 
 export get, set
 
-function get(
+function Base.get(
     filepath::String,
     tag::String,
     varargin...
