@@ -4,12 +4,12 @@ export get, set
 
 
 function Base.get(
-    filepath::String,
-    tag::String,
+    filepath::AbstractString,
+    tag::AbstractString,
     varargin...
     )
   found = match(Regex("$tag\\d+"), filepath)
-  index = int( found.match[ 1+length(tag) : end ] )
+  index = parse( Int, found.match[ 1+length(tag) : end ] )
   if isempty(varargin)
     return index
   else
@@ -24,8 +24,8 @@ end
 
 
 function set(
-    template::String,
-    tag::String,
+    template::AbstractString,
+    tag::AbstractString,
     index::Integer,
     varargin...
     )
