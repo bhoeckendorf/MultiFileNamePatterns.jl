@@ -1,6 +1,6 @@
 module MultiFilePatterns
 
-import Base.get, Base.start, Base.next, Base.done
+import Base.get, Base.length, Base.start, Base.next, Base.done
 
 export AbstractMultiFilePattern, MultiFilePattern, LoadingMultiFilePattern
 export get, set, start, next, done
@@ -19,6 +19,11 @@ immutable LoadingMultiFilePattern <: AbstractMultiFilePattern
     indextag::AbstractString
     indexes::Range{Int}
     loadfun::Function
+end
+
+
+function length(pattern::AbstractMultiFilePattern)
+    length(pattern.indexes)
 end
 
 
