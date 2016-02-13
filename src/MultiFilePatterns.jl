@@ -2,27 +2,37 @@ module MultiFilePatterns
 
 import Base.get, Base.start, Base.next, Base.done
 
-export MultiFilePattern, get, set, start, next, done
+export AbstractMultiFilePattern, MultiFilePattern, LoadingMultiFilePattern
+export get, set, start, next, done
 
 
-immutable MultiFilePattern
+abstract AbstractMultiFilePattern
+
+immutable MultiFilePattern <: AbstractMultiFilePattern
     template::AbstractString
     indextag::AbstractString
     indexes::Range{Int}
 end
 
+immutable LoadingMultiFilePattern <: AbstractMultiFilePattern
+    template::AbstractString
+    indextag::AbstractString
+    indexes::Range{Int}
+    loadfun::Function
+end
 
-function start(pattern::MultiFilePattern)
+
+function start(pattern::AbstractMultiFilePattern)
     return 1
 end
 
 
-function next(pattern::MultiFilePattern, state)
+function next(pattern::AbstractMultiFilePattern, state)
     ( set(pattern, state), state+1 )
 end
 
 
-function done(pattern::MultiFilePattern, state)
+function done(pattern::AbstractMultiFilePattern, state)
     return state > length(pattern.indexes)
 end
 
@@ -71,6 +81,11 @@ end
 
 function set(pattern::MultiFilePattern, index)
     set(pattern.template, pattern.indextag, pattern.indexes[index])
+end
+
+
+function set(pattern::LoadingMultiFilePattern, index)
+    pattern.loadfun(set(pattern.template, pattern.indextag, pattern.indexes[index]))
 end
 
 end # module
