@@ -1,9 +1,33 @@
 module MultiFilePatterns
 
-export get, set
+import Base.get, Base.start, Base.next, Base.done
+
+export MultiFilePattern, get, set, start, next, done
 
 
-function Base.get(
+immutable MultiFilePattern
+    template::AbstractString
+    indextag::AbstractString
+    indexes::Range{Int}
+end
+
+
+function start(pattern::MultiFilePattern)
+    return 1
+end
+
+
+function next(pattern::MultiFilePattern, state)
+    ( set(pattern, state), state+1 )
+end
+
+
+function done(pattern::MultiFilePattern, state)
+    return state > length(pattern.indexes)
+end
+
+
+function get(
     filepath::AbstractString,
     tag::AbstractString,
     varargin...
@@ -42,6 +66,11 @@ function set(
     out = set(out, varargin[i], varargin[i+1])
   end
   return out
+end
+
+
+function set(pattern::MultiFilePattern, index)
+    set(pattern.template, pattern.indextag, pattern.indexes[index])
 end
 
 end # module
