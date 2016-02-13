@@ -1,4 +1,4 @@
-# MultiFileNamePatterns
+# MultiFilePatterns
 
 A primitive but flexible way to handle file paths of multi-file data sets in Julia.
 
@@ -10,7 +10,7 @@ This module handles file paths containing named fields followed by numeric indic
 
 ### Getting field indices
 ```
-using MultiFileNamePatterns
+using MultiFilePatterns
 
 # file system path to one file of a multi-file data set
 filepath = "/path/to/data1/data1_time0099_channel0.csv"

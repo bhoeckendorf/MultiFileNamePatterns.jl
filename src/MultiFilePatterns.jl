@@ -1,4 +1,4 @@
-module MultiFileNamePatterns
+module MultiFilePatterns
 
 export get, set
 
