@@ -1,71 +1,26 @@
 module MultiFilePatterns
 
-import Base.get, Base.length, Base.start, Base.next, Base.done
+export MultiFilePattern, set
 
-export AbstractMultiFilePattern, MultiFilePattern, LoadingMultiFilePattern
-export get, set, start, next, done
-
-
-abstract AbstractMultiFilePattern
-
-immutable MultiFilePattern <: AbstractMultiFilePattern
+immutable MultiFilePattern
     template::AbstractString
     indextag::AbstractString
     indexes::Range{Int}
 end
 
-immutable LoadingMultiFilePattern <: AbstractMultiFilePattern
-    template::AbstractString
-    indextag::AbstractString
-    indexes::Range{Int}
-    loadfun::Function
-end
-
-
-function length(pattern::AbstractMultiFilePattern)
-    length(pattern.indexes)
-end
-
-
-function start(pattern::AbstractMultiFilePattern)
-    return 1
-end
-
-
-function next(pattern::AbstractMultiFilePattern, state)
-    ( set(pattern, state), state+1 )
-end
-
-
-function done(pattern::AbstractMultiFilePattern, state)
-    return state > length(pattern.indexes)
-end
-
-
-function get(
-    filepath::AbstractString,
-    tag::AbstractString,
-    varargin...
-    )
-  found = match(Regex("$tag\\d+"), filepath)
-  index = parse( Int, found.match[ 1+length(tag) : end ] )
-  if isempty(varargin)
-    return index
-  else
-    out = Array(Int, 1+length(varargin))
-    out[1] = index
-    for i in 1:length(varargin)
-      out[1+i] = get(filepath, varargin[i])
-    end
-    return out
-  end
-end
+Base.length( files::MultiFilePattern ) = length(files.indexes)
+Base.getindex( files::MultiFilePattern, i::Int ) = set(files, i)
+Base.endof( files::MultiFilePattern ) = length(files)
+Base.start( ::MultiFilePattern ) = 1
+Base.next( files::MultiFilePattern, state ) = ( set(files, state), state+1 )
+Base.done( files::MultiFilePattern, state ) = state > length(files)
+set( files::MultiFilePattern, i::Int ) = set(files.template, files.indextag, files.indexes[i])
 
 
 function set(
     template::AbstractString,
     tag::AbstractString,
-    index::Integer,
+    index::Int,
     varargin...
     )
   found = match(Regex("$tag\\d+"), template)
@@ -84,13 +39,23 @@ function set(
 end
 
 
-function set(pattern::MultiFilePattern, index)
-    set(pattern.template, pattern.indextag, pattern.indexes[index])
-end
-
-
-function set(pattern::LoadingMultiFilePattern, index)
-    pattern.loadfun(set(pattern.template, pattern.indextag, pattern.indexes[index]))
+function Base.get(
+    filepath::AbstractString,
+    tag::AbstractString,
+    varargin...
+    )
+  found = match(Regex("$tag\\d+"), filepath)
+  index = parse( Int, found.match[ 1+length(tag) : end ] )
+  if isempty(varargin)
+    return index
+  else
+    out = Array(Int, 1+length(varargin))
+    out[1] = index
+    for i in 1:length(varargin)
+      out[1+i] = get(filepath, varargin[i])
+    end
+    return out
+  end
 end
 
 end # module
