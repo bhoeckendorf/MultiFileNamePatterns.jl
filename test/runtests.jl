@@ -1,4 +1,4 @@
-using MultiFileNamePatterns
+using MultiFilePatterns
 using Base.Test
 
 @test get("A000a0001", "A") == 0
